@@ -25,8 +25,11 @@ def clear_line() -> None:
 
 
 def waiting_animation() -> Generator[str]:
+    spinner = ['◐', '◓', '◑', '◒', '⬤', '⬤', '⬤', '⬤', '⬤', '⬤', '⬤', '⬤']
+    #spinner = ['◴', '◷', '◶', '◵', '◴', '◷', '◶', '◵']
+    #spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
     while True:
-        for char in "|/-\\": yield char
+        for char in spinner: yield char
 
 
 
