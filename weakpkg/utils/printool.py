@@ -10,7 +10,10 @@ from shutil import get_terminal_size
 
         
 
-
+def line_up() -> None:
+    print("\033[A", end="")
+def line_down() -> None:
+    print("\033[B", end="")
 
 
 
