@@ -1,8 +1,8 @@
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import Select
-from scrape import lastpage, wordlists_in_page
-from printool import *
+from scrape.utils import lastpage, wordlists_in_page
+from toolkit.print import *
 from time   import sleep
 
 

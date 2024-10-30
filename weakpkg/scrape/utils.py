@@ -1,7 +1,7 @@
 from os import fork
 from typing import LiteralString
 from selectolax.parser import HTMLParser
-from printool import *
+from toolkit.print import *
 from shutil import get_terminal_size
 
 
