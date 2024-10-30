@@ -48,7 +48,7 @@ def setup_env() -> tuple[Firefox, int]:
     TERMINAL_COLOR.bold
 
     p("Lunching Browser...")
-    dv = Firefox()#options=DV_OPTIONS)
+    dv = Firefox(options=DV_OPTIONS)
 
 
     p("Send Resquest...")
@@ -115,7 +115,7 @@ def get_allpages_html(dv:Firefox, max_pages:int) -> list[dict]:
         line_down()
 
         html = dv.page_source
-        if page == 2: break
+
     # after finshing.
     else:
         wordlists += wordlists_in_page(html)
