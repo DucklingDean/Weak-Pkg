@@ -150,7 +150,7 @@ def more_info(dv:Firefox, wordlists:list[dict]):
     for wl in wordlists:
         n += 1
         terminal_size = get_terminal_size().columns
-        dv.get(f'https://www.weakpass.com{wl["url"]}')
+        dv.get(wl["url"])
         print(
 
             C.bright_yellow, C.bold,

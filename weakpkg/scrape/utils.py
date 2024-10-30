@@ -23,7 +23,7 @@ def wordlists_in_page(html:str) -> list[dict]:
 
         all_wordlists.append({
             "title"  :title,
-            "url"    :a_tags[0].attributes.get("href"), # href of the wordlist.
+            "url"    :"https://www.weakpass.com"+a_tags[0].attributes.get("href").strip(), # href of the wordlist.
             "dw_link":a_tags[1].attributes.get("href"), # download url.
             "tr_link":a_tags[2].attributes.get("href"), # torrent file url.
             "size"   :td_tags[2].text().strip(), 
