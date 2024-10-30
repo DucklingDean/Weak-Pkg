@@ -150,18 +150,44 @@ def update_resouce(dv:Firefox, wordlists:list[dict]) -> None:
     exists_in_db  = 0
 
     for wl in wordlists:
-        n += 1
-        terminal_size = get_terminal_size().columns
-        if DB.url_exsits(wl["url"]):
-            exists_in_db += 1
+        try:
+            n += 1
+            terminal_size = get_terminal_size().columns
+            if DB.url_exsits(wl["url"]):
+                exists_in_db += 1
 
-        else:
-            dv.get(wl["url"])
-            while dv.execute_script("return document.readyState;") != "complete":
-                print_incolumn(2, next(animation)) # the animation
-                sleep(0.1)
-            wl.update(wordlist_info(dv.page_source))
-            DB.add(wl)
+            else:
+                dv.get(wl["url"])
+                while dv.execute_script("return document.readyState;") != "complete":
+                    print_incolumn(2, next(animation)) # the animation
+                    sleep(0.1)
+                wl.update(wordlist_info(dv.page_source))
+                DB.add(wl)
+        except KeyboardInterrupt:
+            print(
+                C.bold, C.bg_red,
+                "\n\rERROR:", 
+                C.reset, 
+                f" KeyboardInterrupt",
+                sep=""
+            )
+            DB.save()
+            DB.close()
+            exit()
+
+
+
+
+        except Exception as ex:
+            print(
+                    C.bold, C.bg_red,
+                    "\n\rERROR:", 
+                    C.reset, 
+                    f" {ex}"
+            )
+            exit()
+            
+  
 
 
 
