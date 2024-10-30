@@ -54,7 +54,7 @@ def setup_env() -> tuple[Firefox, int]:
     max_pages = lastpage(dv.page_source)
     print(
         "\r",
-        C.bold, C.bg_bright_blue,
+        C.bold, C.bg_green,
         "Total Pages:",
         C.reset,
         f" {max_pages}", sep=""
@@ -74,11 +74,10 @@ def get_allpages_html(dv:Firefox, max_pages:int) -> list[str]:
     )
     print(
         C.bright_green, C.bold,
-        "[+] HTML         :", 
+        "[+] Scraping HTML:", 
         C.reset, " -",
-        sep="" 
+        sep="", end="" 
     )
-    line_up()
     html      = dv.page_source
     wordlists = []
     animation = waiting_animation()
@@ -106,6 +105,14 @@ def get_allpages_html(dv:Firefox, max_pages:int) -> list[str]:
             print_incolumn(2, "\u2714")
             line_down()
             print()
+    print(
+        "\r",
+        C.bold, C.bg_green,
+        "WORDLISTS:",
+        C.reset,
+        f" {len(wordlists)}", sep=""
+        
+    )
 
     return wordlists
 
@@ -116,8 +123,9 @@ def extract_all():
     dv, max_pages = setup_env()
     
     wordlists = get_allpages_html(dv, max_pages)
-    clear_line()
-    print(len(wordlists))
+    
+
+    
     dv.close()
     
 
