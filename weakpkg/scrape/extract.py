@@ -1,9 +1,10 @@
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import Select
-from scrape.utils import lastpage, wordlists_in_page, wordlist_info
+from scrape.utils  import lastpage, wordlists_in_page, wordlist_info
 from toolkit.print import *
-from time   import sleep
+from toolkit       import DataBase
+from time          import sleep
 
 
 
@@ -138,21 +139,35 @@ def get_allpages_html(dv:Firefox, max_pages:int) -> list[dict]:
 
 
 
-def more_info(dv:Firefox, wordlists:list[dict]):
+def update_resouce(dv:Firefox, wordlists:list[dict]) -> None:
     animation = waiting_animation()
     from shutil import get_terminal_size
+    DB            = DataBase()
     WORDLISTS_NUM = len(wordlists)
     ZERO_NUM      = len(f"{WORDLISTS_NUM}")
     LEN_LEFT      = 23 + ZERO_NUM*2 + 1
     n             = 0
-    new_list      = []
+    exists_in_db  = 0
 
     for wl in wordlists:
         n += 1
         terminal_size = get_terminal_size().columns
-        dv.get(wl["url"])
-        print(
+        if DB.url_exsits(wl["url"]):
+            exists_in_db += 1
 
+        else:
+            dv.get(wl["url"])
+            while dv.execute_script("return document.readyState;") != "complete":
+                print_incolumn(2, next(animation)) # the animation
+                sleep(0.1)
+            wl.update(wordlist_info(dv.page_source))
+            DB.add(wl)
+
+
+
+
+        print(
+            
             C.bright_yellow, C.bold,
             "\r[!] Fetched WORDLIST:", 
             C.reset, f" {str(n).zfill(ZERO_NUM)}/{WORDLISTS_NUM}",
@@ -161,18 +176,21 @@ def more_info(dv:Firefox, wordlists:list[dict]):
             sep="", end="", flush=True 
         )
         
-        while dv.execute_script("return document.readyState;") != "complete":
-            print_incolumn(2, next(animation)) # the animation
-            sleep(0.1)
-
-        current_wl = wl.copy()
-        current_wl.update(wordlist_info(dv.page_source))
-        new_list.append(current_wl)
-
+        
+        
     print_incolumn(2, "\u2714")
-    print()
-    return new_list
+    print(
+        "\n\r",
+        C.bold, C.bg_green,
+        "Already Exists:",
+        C.reset,
+        f" {exists_in_db}", sep=""
+        
+    )
 
+    DB.save()
+    DB.close()
+    
 
 
 
@@ -184,8 +202,10 @@ def extract_all():
     dv, max_pages = setup_env() # setup_env[F] returns tuple.
     
     wordlists = get_allpages_html(dv, max_pages)
+    update_resouce(dv, wordlists)
     
-    print(more_info(dv, wordlists)[-1])
+    
+    
     
     dv.close()
     
