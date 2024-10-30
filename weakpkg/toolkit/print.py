@@ -21,26 +21,33 @@ def line_down() -> None:
 
 
 def clear_line() -> None:
+    """replace the whole row(line) with empty spaces."""
     print("\r"+" "*get_terminal_size().columns, end="")
     
 
 
 
 def waiting_animation() -> Generator[str]:
+    """returns a piece of the animation every time."""
     spinner = ['◐', '◓', '◑', '◒', '⬤', '⬤', '⬤', '⬤', '⬤', '⬤', '⬤', '⬤']
     #spinner = ['◴', '◷', '◶', '◵', '◴', '◷', '◶', '◵']
     #spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
-    while True:
+    while True: 
         for char in spinner: yield char
 
 
 
 def print_incolumn(column:int, txt:str, end="") -> None:
+    """will start printing in a column you choose"""
     print(f"\033[{column}G{txt}",end=end, flush=True)
 
 
 
 class Color:
+    """Contain all escape characters you may need.
+    set `print:bool` to `Fasle` if want the property of the class not print when you tring to access it.
+    let `print:bool` be `True` by default and every time you try to access the property will print it automaticlly.
+    """
     def __init__(self, print:bool=True) -> None:
         assert type(print)==bool
         self.print = print
@@ -190,3 +197,6 @@ class Color:
     @property
     def bg_bright_white(self):
         return self._p(107)
+
+
+
