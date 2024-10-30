@@ -1,7 +1,7 @@
 from selenium.webdriver import Firefox
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import Select
-from scrape.utils import lastpage, wordlists_in_page
+from scrape.utils import lastpage, wordlists_in_page, wordlist_info
 from toolkit.print import *
 from time   import sleep
 
@@ -75,7 +75,7 @@ def setup_env() -> tuple[Firefox, int]:
 
 
 
-def get_allpages_html(dv:Firefox, max_pages:int) -> list[str]:
+def get_allpages_html(dv:Firefox, max_pages:int) -> list[dict]:
     """extract all the wordlists in the website"""
     # first row.
     print(
@@ -114,6 +114,7 @@ def get_allpages_html(dv:Firefox, max_pages:int) -> list[str]:
         line_down()
 
         html = dv.page_source
+        if page == 2: break
     # after finshing.
     else:
         wordlists += wordlists_in_page(html)
@@ -137,12 +138,54 @@ def get_allpages_html(dv:Firefox, max_pages:int) -> list[str]:
 
 
 
+def more_info(dv:Firefox, wordlists:list[dict]):
+    animation = waiting_animation()
+    from shutil import get_terminal_size
+    WORDLISTS_NUM = len(wordlists)
+    ZERO_NUM      = len(f"{WORDLISTS_NUM}")
+    LEN_LEFT      = 23 + ZERO_NUM*2 + 1
+    n             = 0
+    new_list      = []
+
+    for wl in wordlists:
+        n += 1
+        terminal_size = get_terminal_size().columns
+        dv.get(f'https://www.weakpass.com{wl["url"]}')
+        print(
+
+            C.bright_yellow, C.bold,
+            "\r[!] Fetched WORDLIST:", 
+            C.reset, f" {str(n).zfill(ZERO_NUM)}/{WORDLISTS_NUM}",
+            f" {wl['title'][:terminal_size-LEN_LEFT]}",
+            " "*max(0,terminal_size-LEN_LEFT-len(wl['title']) ),
+            sep="", end="", flush=True 
+        )
+        
+        while dv.execute_script("return document.readyState;") != "complete":
+            print_incolumn(2, next(animation)) # the animation
+            sleep(0.1)
+
+        current_wl = wl.copy()
+        current_wl.update(wordlist_info(dv.page_source))
+        new_list.append(current_wl)
+
+    print_incolumn(2, "\u2714")
+    print()
+    return new_list
+
+
+
+
+
+
+
+
 def extract_all():
-    dv, max_pages = setup_env() # setup_env returns tuple.
+    dv, max_pages = setup_env() # setup_env[F] returns tuple.
     
     wordlists = get_allpages_html(dv, max_pages)
     
-
+    print(more_info(dv, wordlists)[-1])
     
     dv.close()
     
